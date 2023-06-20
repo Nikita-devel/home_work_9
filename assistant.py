@@ -1,8 +1,7 @@
 import datetime
 import requests
 
-# API_KEY = "<YOUR_API_KEY>"
-API_KEY = "653c3ccd328356a16a58c6dbd440c093"
+API_KEY = "<YOUR_API_KEY>"
 
 
 def input_error(func):
@@ -15,6 +14,8 @@ def input_error(func):
             return "Give me name and phone please"
         except IndexError:
             return "Enter both name and phone"
+        except Exception as e:
+            return str(e)
         
     return inner
 
@@ -24,26 +25,26 @@ contacts = {}
 
 @input_error
 def add_contact(name, phone):
-    contacts[name] = phone
+    contacts[name.capitalize()] = phone
     return "Contact added successfully"
 
 
 @input_error
 def change_contact(name, phone):
-    contacts[name] = phone
+    contacts[name.capitalize()] = phone
     return "Contact updated successfully"
 
 
 @input_error
 def get_phone(name):
-    return contacts[name]
+    return contacts[name.capitalize()]
 
 
 def show_all_contacts():
     if contacts:
-        return "\n".join([f"{name}: {phone}"for name, phone in contacts.items()])
+        return "\n".join([f"{name}: {phone}" for name, phone in contacts.items()])
     else:
-      return "No contacts found"
+        return "No contacts found"
 
 
 def get_weather(city):
@@ -82,37 +83,54 @@ def help_commands():
 def main():
     print("Welcome to the Assistant! How can I help you?")
     while True:
-        user_input = input("Enter a command: ").lower().split(" ", 1)
-        command = user_input[0]
-        if command == "hello":
-            print("How can I help you?")
-        elif command == "add":
-            name, phone = user_input[1].split(" ")
-            print(add_contact(name, phone))
-        elif command == "change":
-            name, phone = user_input[1].split(" ")
-            print(change_contact(name, phone))
-        elif command == "phone":
-            name = user_input[1]
-            try:
-                print(get_phone(name))
-            except KeyError:
-                print("Contact not found")
-        elif command == "show":
-            if user_input[1] == "all":
-                print(show_all_contacts())
-        elif command == "weather":
-            city = user_input[1]
-            print(get_weather(city))
-        elif command == "time":
-            print(get_current_time())
-        elif command == "help":
-            print(help_commands())
-        elif command in ["good", "bye", "close", "exit"]:
-            print("Good bye!")
-            break
-        else:
-            print("Invalid command. Type 'help' to see the available commands.")
+        try:
+            user_input = input("Enter a command: ").lower().split(" ", 1)
+            command = user_input[0]
+            if command == "hello":
+                print("How can I help you?")
+            elif command == "add":
+                if len(user_input) == 2:
+                    name, phone = user_input[1].split(" ")
+                    print(add_contact(name, phone))
+                else:
+                    raise ValueError("Give me name and phone please")
+            elif command == "change":
+                if len(user_input) == 2:
+                    name, phone = user_input[1].split(" ")
+                    print(change_contact(name, phone))
+                else:
+                    raise ValueError("Give me name and phone please")
+            elif command == "phone":
+                if len(user_input) == 2:
+                    name = user_input[1]
+                    try:
+                        print(get_phone(name))
+                    except KeyError:
+                        print("Contact not found")
+                else:
+                    raise ValueError("Enter user name")
+            elif command == "show":
+                if len(user_input) == 2 and user_input[1] == "all":
+                    print(show_all_contacts())
+                else:
+                    raise ValueError("Invalid command. Type 'help' to see the available commands.")
+            elif command == "weather":
+                if len(user_input) == 2:
+                    city = user_input[1]
+                    print(get_weather(city))
+                else:
+                    raise ValueError("Enter city name")
+            elif command == "time":
+                print(get_current_time())
+            elif command == "help":
+                print(help_commands())
+            elif command in ["good", "bye", "close", "exit"]:
+                print("Good bye!")
+                break
+            else:
+                print("Invalid command. Type 'help' to see the available commands.")
+        except Exception as e:
+            print(str(e))
 
 
 if __name__ == "__main__":
