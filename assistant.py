@@ -79,59 +79,67 @@ def help_commands():
     - good bye, close, exit: Close the assistant
     """
 
+def parse_command(user_input):
+    command = user_input[0]
+    arguments = user_input[1:]
+
+    if command == "hello":
+        print("How can I help you?")
+    elif command == "add":
+        if len(arguments) >= 2:
+            name = arguments[0]
+            phone = " ".join(arguments[1:])
+            print(add_contact(name, phone))
+        else:
+            raise ValueError("Give me name and phone please")
+    elif command == "change":
+        if len(arguments) == 2:
+            name, phone = arguments
+            print(change_contact(name, phone))
+        else:
+            raise ValueError("Give me name and phone please")
+    elif command == "phone":
+        if len(arguments) == 1:
+            name = arguments[0]
+            try:
+                print(get_phone(name))
+            except KeyError:
+                print("Contact not found")
+        else:
+            raise ValueError("Enter user name")
+    elif command == "show":
+        if len(arguments) == 1 and arguments[0] == "all":
+            print(show_all_contacts())
+        else:
+            raise ValueError("Invalid command. Type 'help' to see the available commands.")
+    elif command == "weather":
+        if len(arguments) == 1:
+            city = arguments[0]
+            print(get_weather(city))
+        else:
+            raise ValueError("Enter city name")
+    elif command == "time":
+        print(get_current_time())
+    elif command == "help":
+        print(help_commands())
+    elif command in ["good", "bye", "close", "exit"]:
+        print("Good bye!")
+        return True
+    else:
+        print("Invalid command. Type 'help' to see the available commands.")
+
+    return False
 
 def main():
     print("Welcome to the Assistant! How can I help you?")
     while True:
         try:
-            user_input = input("Enter a command: ").lower().split(" ", 1)
-            command = user_input[0]
-            if command == "hello":
-                print("How can I help you?")
-            elif command == "add":
-                if len(user_input) == 2:
-                    name, phone = user_input[1].split(" ")
-                    print(add_contact(name, phone))
-                else:
-                    raise ValueError("Give me name and phone please")
-            elif command == "change":
-                if len(user_input) == 2:
-                    name, phone = user_input[1].split(" ")
-                    print(change_contact(name, phone))
-                else:
-                    raise ValueError("Give me name and phone please")
-            elif command == "phone":
-                if len(user_input) == 2:
-                    name = user_input[1]
-                    try:
-                        print(get_phone(name))
-                    except KeyError:
-                        print("Contact not found")
-                else:
-                    raise ValueError("Enter user name")
-            elif command == "show":
-                if len(user_input) == 2 and user_input[1] == "all":
-                    print(show_all_contacts())
-                else:
-                    raise ValueError("Invalid command. Type 'help' to see the available commands.")
-            elif command == "weather":
-                if len(user_input) == 2:
-                    city = user_input[1]
-                    print(get_weather(city))
-                else:
-                    raise ValueError("Enter city name")
-            elif command == "time":
-                print(get_current_time())
-            elif command == "help":
-                print(help_commands())
-            elif command in ["good", "bye", "close", "exit"]:
-                print("Good bye!")
+            user_input = input("Enter a command: ").lower().split(" ")
+            if parse_command(user_input):
                 break
-            else:
-                print("Invalid command. Type 'help' to see the available commands.")
         except Exception as e:
             print(str(e))
 
-
 if __name__ == "__main__":
     main()
+
