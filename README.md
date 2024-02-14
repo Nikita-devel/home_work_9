@@ -37,9 +37,9 @@ To implement this functionality, a dictionary is used to store user names as key
    ```bash
    pip install -r requirements.txt
    ```
-3. Run the script (assistant_bot.py) in the command line:
+3. Run the script (assistant.py) in the command line:
   
   ```bash
-  python assistant_bot.py
+  python assistant.py
   ```
 4. Follow the on-screen instructions to interact with the bot.
